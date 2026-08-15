@@ -217,6 +217,16 @@ export async function removeAttendeeFromOrder(attendeeId: string) {
   await recalculateOrderTotal(attendee.orderId)
 }
 
+export async function setAttendeeRoom(attendeeId: string, roomId: string | null) {
+  if (!(await isAdminAuthed())) {
+    throw new Error("Not authorized")
+  }
+  await prisma.attendee.update({
+    where: { id: attendeeId },
+    data: { assignedRoom: roomId },
+  })
+}
+
 export async function deleteOrder(orderId: string) {
   if (!(await isAdminAuthed())) {
     throw new Error("Not authorized")

@@ -9,11 +9,14 @@ export interface AssignmentAttendee {
   roommatePreference: string | null
 }
 
-interface Room {
+export interface Room {
   id: string
   lodgeName: string
   capacity: number
 }
+
+// Tiers that need a physical room at all (excludes camper/day_rate, which don't).
+export const ROOM_ELIGIBLE_TICKET_TYPES = ["roommates", "buddies", "couples", "single", "kiddie"]
 
 interface Occupant {
   attendeeId: string
@@ -59,6 +62,30 @@ function buildRoomPool(lodgeName: string, blocks: { count: number; capacity: num
     }
   }
   return rooms
+}
+
+// Every physical room, including the reserved one -- for rendering a full
+// board of blank rooms rather than only ones the algorithm happened to fill.
+export function getAllRooms(roomsConfig: RoomsContent): Room[] {
+  const lodgeRooms = roomsConfig.lodges.flatMap((lodge) => buildRoomPool(lodge.name, lodge.rooms))
+  const reserved: Room = {
+    id: roomsConfig.reservedRoom.lodgeName,
+    lodgeName: roomsConfig.reservedRoom.lodgeName,
+    capacity: 1,
+  }
+  return [...lodgeRooms, reserved]
+}
+
+// Flattens an assignment report into attendeeId -> roomId, for seeding
+// initial placements in an interactive board.
+export function suggestedRoomMap(report: AssignmentReport): Map<string, string> {
+  const map = new Map<string, string>()
+  for (const r of report.rooms) {
+    for (const occ of r.occupants) {
+      map.set(occ.attendeeId, r.room.id)
+    }
+  }
+  return map
 }
 
 class UnionFind {
@@ -349,4 +376,26 @@ export function assignRooms(
     reservedRoomNote,
     flags,
   }
+}
+
+export interface AttendeeWithAssignment extends AssignmentAttendee {
+  assignedRoom: string | null
+}
+
+// The board's source of truth for where someone currently sits: a saved
+// manual placement always wins; otherwise fall back to the algorithm's live
+// suggestion. Shared between the interactive page and the CSV export so both
+// always agree.
+export function resolvePlacements(
+  attendees: AttendeeWithAssignment[],
+  roomsConfig: RoomsContent
+): Map<string, string | null> {
+  const eligible = attendees.filter((a) => ROOM_ELIGIBLE_TICKET_TYPES.includes(a.ticketType))
+  const report = assignRooms(eligible, roomsConfig)
+  const suggested = suggestedRoomMap(report)
+  const result = new Map<string, string | null>()
+  for (const a of eligible) {
+    result.set(a.id, a.assignedRoom ?? suggested.get(a.id) ?? null)
+  }
+  return result
 }

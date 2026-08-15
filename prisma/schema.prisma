@@ -52,5 +52,6 @@ model Attendee {
   volunteerTasks         String?
   sundayNightAddOn       Boolean  @default(false)
   alcoholAddOn           Boolean  @default(false)
+  assignedRoom           String?
   createdAt              DateTime @default(now())
 }

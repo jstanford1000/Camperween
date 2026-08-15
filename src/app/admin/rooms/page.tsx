@@ -2,7 +2,14 @@ import { redirect } from "next/navigation"
 import { getAllOrders, isAdminAuthed } from "@/app/actions"
 import { getPricingContent, getRoomsContent } from "@/lib/content"
 import { findTicketType } from "@/lib/pricing"
-import { assignRooms, type AssignmentAttendee } from "@/lib/roomAssignment"
+import {
+  ROOM_ELIGIBLE_TICKET_TYPES,
+  assignRooms,
+  getAllRooms,
+  resolvePlacements,
+  type AttendeeWithAssignment,
+} from "@/lib/roomAssignment"
+import { RoomBoard, type RoomBoardPerson } from "@/components/RoomBoard"
 
 export default async function AdminRoomsPage() {
   if (!(await isAdminAuthed())) {
@@ -13,7 +20,7 @@ export default async function AdminRoomsPage() {
   const pricing = getPricingContent()
   const roomsConfig = getRoomsContent()
 
-  const attendees: AssignmentAttendee[] = orders.flatMap((order) =>
+  const attendees: AttendeeWithAssignment[] = orders.flatMap((order) =>
     order.attendees.map((a) => ({
       id: a.id,
       orderId: order.id,
@@ -21,10 +28,9 @@ export default async function AdminRoomsPage() {
       lastName: a.lastName,
       ticketType: a.ticketType,
       roommatePreference: a.roommatePreference,
+      assignedRoom: a.assignedRoom,
     }))
   )
-
-  const report = assignRooms(attendees, roomsConfig)
 
   function ticketLabel(ticketType: string) {
     try {
@@ -34,83 +40,53 @@ export default async function AdminRoomsPage() {
     }
   }
 
-  const excluded = attendees.filter((a) => !["roommates", "buddies", "couples", "single", "kiddie"].includes(a.ticketType))
+  const eligible = attendees.filter((a) => ROOM_ELIGIBLE_TICKET_TYPES.includes(a.ticketType))
+  const sundayNightAddOnByAttendeeId = new Map(
+    orders.flatMap((o) => o.attendees.map((a) => [a.id, a.sundayNightAddOn] as const))
+  )
+  const placements = resolvePlacements(attendees, roomsConfig)
+  const flags = assignRooms(eligible, roomsConfig).flags
+
+  const people: RoomBoardPerson[] = eligible.map((a) => ({
+    id: a.id,
+    name: `${a.firstName} ${a.lastName}`.trim(),
+    ticketTypeLabel: ticketLabel(a.ticketType),
+    roommatePreference: a.roommatePreference,
+    sundayNightAddOn: sundayNightAddOnByAttendeeId.get(a.id) ?? false,
+    initialRoomId: placements.get(a.id) ?? null,
+  }))
+
+  const allRooms = getAllRooms(roomsConfig)
+
+  const excluded = attendees.filter((a) => !ROOM_ELIGIBLE_TICKET_TYPES.includes(a.ticketType))
 
   return (
     <div className="min-h-screen bg-black py-8 px-4 sm:px-8">
       <div className="max-w-5xl mx-auto space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-neutral-100">Suggested room assignments</h1>
-          <p className="text-neutral-400 text-sm mt-1">
-            A best-effort algorithmic first pass, grouped from housing tier, who registered
-            together, and named roommate requests. Review before finalizing -- it does not know
-            your campers personally.
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-neutral-100">Room assignments</h1>
+            <p className="text-neutral-400 text-sm mt-1">
+              Drag people between rooms to adjust. Unmoved people show the algorithm&apos;s
+              suggestion; anything you drag is saved and stays put. Hover a name for their
+              roommate request; 🌙 means they added the Sunday night stay.
+            </p>
+          </div>
+          <a
+            href="/admin/rooms/export"
+            className="rounded-md border border-neutral-600 px-4 py-2 text-sm text-neutral-200 hover:border-neutral-400 shrink-0"
+          >
+            Export CSV
+          </a>
         </div>
 
-        {report.flags.length > 0 && (
-          <section className="rounded-lg border border-amber-600 bg-amber-500/10 p-4 space-y-1">
-            <div className="text-sm font-semibold text-amber-400">Needs your review</div>
-            {report.flags.map((f, i) => (
-              <div key={i} className="text-sm text-neutral-200">
-                {f}
-              </div>
-            ))}
-          </section>
-        )}
-
-        {report.unassigned.length > 0 && (
-          <section className="rounded-lg border border-red-800 bg-red-950/30 p-4 space-y-1">
-            <div className="text-sm font-semibold text-red-400">Could not be assigned a room</div>
-            {report.unassigned.map((u, i) => (
-              <div key={i} className="text-sm text-neutral-200">
-                {u.name} ({ticketLabel(u.ticketType)}) -- {u.reason}
-              </div>
-            ))}
-          </section>
-        )}
-
-        <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-neutral-100">Rooms</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {report.rooms.map((r) => (
-              <div key={r.room.id} className="rounded-lg border border-neutral-700 bg-neutral-900 p-4">
-                <div className="flex items-center justify-between">
-                  <div className="font-medium text-neutral-100">{r.room.id}</div>
-                  <div className="text-xs text-neutral-500">
-                    {r.occupants.length} / {r.room.capacity}
-                  </div>
-                </div>
-                <ul className="mt-2 space-y-1 text-sm text-neutral-300">
-                  {r.occupants.map((o) => (
-                    <li key={o.attendeeId}>
-                      {o.name}{" "}
-                      <span className="text-neutral-500">
-                        ({ticketLabel(o.ticketType)}
-                        {o.isKiddie ? ", with a parent in this room" : ""})
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {!report.rooms.some((r) => r.room.id === roomsConfig.reservedRoom.lodgeName) && (
-          <p className="text-sm text-neutral-500">
-            {roomsConfig.reservedRoom.lodgeName}: {report.reservedRoomNote}
-          </p>
-        )}
-
-        {report.unusedRooms.length > 0 && (
-          <section className="space-y-2">
-            <h2 className="text-lg font-semibold text-neutral-100">Unused rooms</h2>
-            <p className="text-sm text-neutral-500">
-              {report.unusedRooms.map((r) => `${r.id} (cap ${r.capacity})`).join(", ")}
-            </p>
-          </section>
-        )}
+        <RoomBoard
+          rooms={allRooms}
+          people={people}
+          flags={flags}
+          reservedLodgeName={roomsConfig.reservedRoom.lodgeName}
+          reservedRoomNote={roomsConfig.reservedRoom.note}
+        />
 
         {excluded.length > 0 && (
           <section className="space-y-2">

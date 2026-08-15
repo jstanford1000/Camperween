@@ -2,14 +2,7 @@ import { NextResponse } from "next/server"
 import { getAllOrders, isAdminAuthed } from "@/app/actions"
 import { getPricingContent } from "@/lib/content"
 import { findTicketType } from "@/lib/pricing"
-
-function csvCell(value: string | number | boolean | null | undefined): string {
-  const s = value === null || value === undefined ? "" : String(value)
-  if (/[",\n]/.test(s)) {
-    return `"${s.replace(/"/g, '""')}"`
-  }
-  return s
-}
+import { csvCell } from "@/lib/csv"
 
 function ticketLabel(pricing: ReturnType<typeof getPricingContent>, ticketType: string): string {
   try {
