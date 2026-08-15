@@ -22,11 +22,8 @@ lodges:
 # A room held aside outside the normal pool, for a specific named registrant.
 reservedRoom:
   lodgeName: Program Office
-  # Spelled "Jennfer" to match the room list note exactly (looks like a typo for
-  # "Jennifer" in the source, but matching must be exact -- fix this if her
-  # actual registration uses the standard spelling).
-  reservedForName: Jennfer Jolly
+  reservedForName: Jennifer Jolly
   # Only reserved once this person actually registers under this ticket type id
   # (see content/pricing.yaml) -- otherwise the room sits unused in the report.
   reservedForTicketTypeId: roommates
-  note: Jennfer Jolly will be in this room once she registers at the roommate tier.
+  note: Jennifer Jolly will be in this room once she registers at the roommate tier.
