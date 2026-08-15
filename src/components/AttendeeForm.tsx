@@ -179,8 +179,8 @@ export function AttendeeForm({
         </div>
       </fieldset>
 
-      <div>
-        <h4 className="label mb-2">{t.addOnsSubtitle}</h4>
+      <div className="pt-2 pb-1">
+        <h4 className="subtitle mb-3">{t.addOnsSubtitle}</h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {sundayAddOn && (
             <label className="flex items-start gap-3 rounded-md border border-neutral-700 p-3 cursor-pointer">
