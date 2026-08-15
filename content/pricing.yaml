@@ -13,8 +13,8 @@ ticketTypes:
     hasLodging: true
     allowsRoommatePreference: true
   - id: buddies
-    label: Buddy in Cary Lodge
-    description: 3-4 people/room. Tell us who you're rooming with below (Smaller room fit up to 4 people) or tell us you are flexible and we will pick great roommates for you.
+    label: Roomie in Cary Lodge
+    description: 3-4 people/room. Tell us who you're rooming with below (This smaller rooms fit up to 4 people) or tell us you are flexible and we will pick great roommates for you.
     price: 305
     hasLodging: true
     allowsRoommatePreference: true
@@ -61,4 +61,4 @@ addOns:
   - id: alcohol
     label: Alcohol add-on
     description: Access to the alcohol at camp for the weekend.
-    price: 15
+    price: 20
