@@ -31,7 +31,7 @@ ticketTypes:
     hasLodging: true
     allowsRoommatePreference: false
   - id: kiddie
-    label: Kiddie
+    label: Kiddo
     description: For little kids 0-5 years old. You will be rooming with your parents in whatever space they have chosen for themselves.
     price: 0
     hasLodging: true

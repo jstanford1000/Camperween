@@ -236,7 +236,7 @@ export function OrderForm({ pricing, labels }: Props) {
           <button
             type="button"
             onClick={addAttendee}
-            className="w-full rounded-md border border-dashed border-neutral-600 py-3 text-neutral-300 hover:border-amber-500 hover:text-amber-400"
+            className="w-full rounded-md border-2 border-amber-600 bg-amber-500/10 py-3 text-amber-400 font-semibold text-base hover:bg-amber-500/20 hover:border-amber-500 transition-colors cursor-pointer"
           >
             {labels.attendees.addAttendeeButton}
           </button>
