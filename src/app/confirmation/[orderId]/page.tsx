@@ -20,6 +20,12 @@ export default async function ConfirmationPage({
   type Attendee = (typeof order.attendees)[number]
   const pricing = getPricingContent()
 
+  const paymentNote = `${order.purchaserFirstName} ${order.purchaserLastName} - Camperween`
+  const venmoUsername = PAYMENT_INSTRUCTIONS.venmo.replace(/^@/, "").trim()
+  const paypalUsername = PAYMENT_INSTRUCTIONS.paypal.replace(/^@/, "").trim()
+  const venmoUrl = `https://venmo.com/${encodeURIComponent(venmoUsername)}?txn=pay&amount=${order.total.toFixed(2)}&note=${encodeURIComponent(paymentNote)}`
+  const paypalUrl = `https://paypal.me/${encodeURIComponent(paypalUsername)}/${order.total.toFixed(2)}`
+
   return (
     <div className="min-h-screen bg-black py-10 px-4 sm:px-8">
       <div className="max-w-2xl mx-auto space-y-6">
@@ -50,16 +56,16 @@ export default async function ConfirmationPage({
             <PaymentOption
               label="Venmo"
               handle={PAYMENT_INSTRUCTIONS.venmo}
-              href="https://venmo.com/u/JulieStanford"
+              href={venmoUrl}
               icon={<VenmoIcon />}
             />
-            <PaymentOption label="Zelle" handle={PAYMENT_INSTRUCTIONS.zelle} icon={<ZelleIcon />} />
             <PaymentOption
               label="PayPal"
               handle={PAYMENT_INSTRUCTIONS.paypal}
-              href="https://paypal.me/juliestanford"
+              href={paypalUrl}
               icon={<PaypalIcon />}
             />
+            <PaymentOption label="Zelle" handle={PAYMENT_INSTRUCTIONS.zelle} icon={<ZelleIcon />} />
           </dl>
         </section>
 
@@ -105,29 +111,40 @@ function PaymentOption({
   href?: string
   icon: React.ReactNode
 }) {
-  const content = (
-    <div className="flex items-start gap-3 h-full">
-      {icon}
-      <div className="min-w-0">
-        <div className="text-xs uppercase tracking-wide text-neutral-500">{label}</div>
-        <div className="text-neutral-100 font-medium mt-1 break-all">{handle}</div>
-      </div>
-    </div>
-  )
-
-  const className =
-    "rounded-md border border-neutral-700 bg-neutral-950 p-3 block h-full" +
-    (href ? " hover:border-amber-500 transition-colors" : "")
-
   if (href) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
-        {content}
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="rounded-md border border-amber-600 bg-amber-500/10 p-3 block h-full hover:bg-amber-500/20 hover:border-amber-500 transition-colors cursor-pointer"
+      >
+        <div className="flex items-start gap-3 h-full">
+          {icon}
+          <div className="min-w-0">
+            <div className="text-xs uppercase tracking-wide text-neutral-400">{label}</div>
+            <div className="text-neutral-100 font-medium mt-1 break-all">{handle}</div>
+            <div className="text-amber-400 text-xs font-semibold mt-1">Open &amp; pay &rarr;</div>
+          </div>
+        </div>
       </a>
     )
   }
 
-  return <div className={className}>{content}</div>
+  return (
+    <div className="rounded-md border border-dashed border-neutral-700 bg-neutral-950 p-3 h-full">
+      <div className="flex items-start gap-3 h-full">
+        {icon}
+        <div className="min-w-0">
+          <div className="text-xs uppercase tracking-wide text-neutral-500">{label}</div>
+          <div className="text-neutral-100 font-medium mt-1 break-all">{handle}</div>
+          <div className="text-neutral-500 text-xs mt-1">
+            No link -- send through your bank&apos;s Zelle
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 function VenmoIcon() {

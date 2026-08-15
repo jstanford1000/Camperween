@@ -1,0 +1,32 @@
+# Camperween room inventory, used by the /admin/rooms suggested-assignment page.
+# Edit room counts/capacities here if the lodge layout changes -- no code changes needed.
+
+lodges:
+  - name: Cary Lodge
+    rooms:
+      - count: 16
+        capacity: 4
+      - count: 3
+        capacity: 3
+  - name: Morris Lodge
+    rooms:
+      - count: 4
+        capacity: 10
+  - name: Miller Lodge
+    rooms:
+      - count: 3
+        capacity: 8
+      - count: 2
+        capacity: 6
+
+# A room held aside outside the normal pool, for a specific named registrant.
+reservedRoom:
+  lodgeName: Program Office
+  # Spelled "Jennfer" to match the room list note exactly (looks like a typo for
+  # "Jennifer" in the source, but matching must be exact -- fix this if her
+  # actual registration uses the standard spelling).
+  reservedForName: Jennfer Jolly
+  # Only reserved once this person actually registers under this ticket type id
+  # (see content/pricing.yaml) -- otherwise the room sits unused in the report.
+  reservedForTicketTypeId: roommates
+  note: Jennfer Jolly will be in this room once she registers at the roommate tier.

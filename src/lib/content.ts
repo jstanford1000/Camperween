@@ -82,6 +82,24 @@ export interface LabelsContent {
   }
 }
 
+export interface RoomBlockContent {
+  count: number
+  capacity: number
+}
+
+export interface RoomsContent {
+  lodges: {
+    name: string
+    rooms: RoomBlockContent[]
+  }[]
+  reservedRoom: {
+    lodgeName: string
+    reservedForName: string
+    reservedForTicketTypeId: string
+    note: string
+  }
+}
+
 function loadYaml<T>(fileName: string): T {
   const filePath = path.join(process.cwd(), "content", fileName)
   const raw = fs.readFileSync(filePath, "utf8")
@@ -94,4 +112,8 @@ export function getPricingContent(): PricingContent {
 
 export function getLabelsContent(): LabelsContent {
   return loadYaml<LabelsContent>("labels.yaml")
+}
+
+export function getRoomsContent(): RoomsContent {
+  return loadYaml<RoomsContent>("rooms.yaml")
 }

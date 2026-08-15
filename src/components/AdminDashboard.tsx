@@ -4,7 +4,7 @@ import { useMemo, useState, useTransition } from "react"
 import Link from "next/link"
 import { adminLogout, deleteOrder, setOrderPaymentStatus } from "@/app/actions"
 import type { LabelsContent, PricingContent } from "@/lib/content"
-import { formatCurrency } from "@/lib/pricing"
+import { findTicketType, formatCurrency } from "@/lib/pricing"
 import { useRouter } from "next/navigation"
 import { AdminAttendeeCard } from "./AdminAttendeeCard"
 import { AdminOrderNote } from "./AdminOrderNote"
@@ -68,6 +68,25 @@ export function AdminDashboard({
     .filter((o) => o.paymentStatus !== "paid")
     .reduce((sum, o) => sum + o.total, 0)
 
+  const tierLabel = (ticketType: string) => {
+    try {
+      return findTicketType(pricing, ticketType).label
+    } catch {
+      return ticketType
+    }
+  }
+
+  const tierCounts = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const order of orders) {
+      for (const a of order.attendees) {
+        const label = tierLabel(a.ticketType)
+        counts.set(label, (counts.get(label) ?? 0) + 1)
+      }
+    }
+    return counts
+  }, [orders, pricing])
+
   function togglePaid(orderId: string, currentlyPaid: boolean) {
     startTransition(async () => {
       await setOrderPaymentStatus(orderId, !currentlyPaid)
@@ -112,6 +131,12 @@ export function AdminDashboard({
             >
               Print list
             </Link>
+            <Link
+              href="/admin/rooms"
+              className="rounded-md border border-neutral-600 px-4 py-2 text-sm text-neutral-200 hover:border-neutral-400"
+            >
+              Room assignments
+            </Link>
             <button
               onClick={() => {
                 startTransition(async () => {
@@ -131,6 +156,20 @@ export function AdminDashboard({
           <StatCard label="Collected" value={formatCurrency(totalCollected)} />
           <StatCard label="Outstanding" value={formatCurrency(totalOwed)} />
           <StatCard label="Total attendees" value={String(totalAttendees)} />
+        </div>
+
+        <div className="rounded-lg border border-neutral-700 bg-neutral-900 p-4">
+          <div className="text-xs uppercase tracking-wide text-neutral-500 mb-3">
+            Attendees by housing tier
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+            {pricing.ticketTypes.map((t) => (
+              <div key={t.id} className="flex justify-between gap-2">
+                <span className="text-neutral-300">{t.label}</span>
+                <span className="text-neutral-100 font-medium">{tierCounts.get(t.label) ?? 0}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="flex gap-2">
@@ -163,7 +202,14 @@ export function AdminDashboard({
                       ({order.attendees.length} attendee{order.attendees.length !== 1 ? "s" : ""})
                     </span>
                   </div>
-                  <div className="text-sm text-neutral-400">{order.purchaserEmail}</div>
+                  <a
+                    href={`mailto:${order.purchaserEmail}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-sm text-neutral-400 hover:text-amber-400 hover:underline"
+                  >
+                    {order.purchaserEmail}
+                  </a>
+                  <OrderTierSummary order={order} tierLabel={tierLabel} />
                 </div>
                 <div className="flex items-center gap-4">
                   <span className="font-semibold text-neutral-100">
@@ -226,6 +272,32 @@ export function AdminDashboard({
           )}
         </div>
       </div>
+    </div>
+  )
+}
+
+function OrderTierSummary({
+  order,
+  tierLabel,
+}: {
+  order: OrderRow
+  tierLabel: (ticketType: string) => string
+}) {
+  const tierCounts = new Map<string, number>()
+  let sundayCount = 0
+  let alcoholCount = 0
+  for (const a of order.attendees) {
+    const label = tierLabel(a.ticketType)
+    tierCounts.set(label, (tierCounts.get(label) ?? 0) + 1)
+    if (a.sundayNightAddOn) sundayCount++
+    if (a.alcoholAddOn) alcoholCount++
+  }
+  const tierText = [...tierCounts.entries()].map(([label, count]) => `${label} x${count}`).join(", ")
+
+  return (
+    <div className="text-xs text-neutral-500 mt-1">
+      {tierText || "No housing tier selected"} &middot; Sunday night: {sundayCount} &middot; Alcohol:{" "}
+      {alcoholCount}
     </div>
   )
 }

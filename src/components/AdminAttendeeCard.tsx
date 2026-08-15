@@ -266,7 +266,14 @@ export function AdminAttendeeCard({
         </div>
       </div>
       <div className="text-neutral-400">Age: {attendee.ageCategory}</div>
-      {attendee.email && <div className="text-neutral-400">Email: {attendee.email}</div>}
+      {attendee.email && (
+        <div className="text-neutral-400">
+          Email:{" "}
+          <a href={`mailto:${attendee.email}`} className="hover:text-amber-400 hover:underline">
+            {attendee.email}
+          </a>
+        </div>
+      )}
       {attendee.phone && <div className="text-neutral-400">Phone: {attendee.phone}</div>}
       {attendee.roommatePreference && (
         <div className="text-neutral-400">Roommates: {attendee.roommatePreference}</div>
