@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react"
 import Link from "next/link"
-import { adminLogout, setOrderPaymentStatus } from "@/app/actions"
+import { adminLogout, deleteOrder, setOrderPaymentStatus } from "@/app/actions"
 import type { LabelsContent, PricingContent } from "@/lib/content"
 import { formatCurrency } from "@/lib/pricing"
 import { useRouter } from "next/navigation"
@@ -71,6 +71,20 @@ export function AdminDashboard({
   function togglePaid(orderId: string, currentlyPaid: boolean) {
     startTransition(async () => {
       await setOrderPaymentStatus(orderId, !currentlyPaid)
+      router.refresh()
+    })
+  }
+
+  function handleDeleteOrder(orderId: string, purchaserName: string) {
+    if (
+      !window.confirm(
+        `Delete ${purchaserName}'s entire registration, including all attendees? This can't be undone.`
+      )
+    ) {
+      return
+    }
+    startTransition(async () => {
+      await deleteOrder(orderId)
       router.refresh()
     })
   }
@@ -168,6 +182,19 @@ export function AdminDashboard({
                     }`}
                   >
                     {order.paymentStatus === "paid" ? "Paid" : "Mark paid"}
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleDeleteOrder(
+                        order.id,
+                        `${order.purchaserFirstName} ${order.purchaserLastName}`
+                      )
+                    }}
+                    disabled={isPending}
+                    className="text-sm text-neutral-400 hover:text-red-400 disabled:opacity-50"
+                  >
+                    Delete
                   </button>
                 </div>
               </div>

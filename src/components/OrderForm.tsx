@@ -56,9 +56,7 @@ export function OrderForm({ pricing, labels }: Props) {
   const [parentGuardianWaiver, setParentGuardianWaiver] = useState(false)
   const [comments, setComments] = useState("")
 
-  const [attendees, setAttendees] = useState<AttendeeFormData[]>([
-    emptyAttendee(pricing.ticketTypes[0]?.id ?? ""),
-  ])
+  const [attendees, setAttendees] = useState<AttendeeFormData[]>([emptyAttendee("")])
   const [attendee1SameAsPrimary, setAttendee1SameAsPrimary] = useState(true)
 
   function updateAttendee(index: number, next: AttendeeFormData) {
@@ -99,7 +97,7 @@ export function OrderForm({ pricing, labels }: Props) {
   )
 
   function addAttendee() {
-    setAttendees((prev) => [...prev, emptyAttendee(pricing.ticketTypes[0]?.id ?? "")])
+    setAttendees((prev) => [...prev, emptyAttendee(prev[0]?.ticketType ?? "")])
   }
 
   function removeAttendee(index: number) {
@@ -118,6 +116,10 @@ export function OrderForm({ pricing, labels }: Props) {
     }
     if (effectiveAttendees.some((a) => !a.ageCategory)) {
       setError("Please select an age category for every attendee.")
+      return
+    }
+    if (effectiveAttendees.some((a) => !a.ticketType)) {
+      setError("Please select a housing type for every attendee.")
       return
     }
 

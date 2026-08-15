@@ -125,7 +125,7 @@ volunteerTasks:
 
 orderSummary:
   sectionTitle: Order summary
-  submitButton: Continue to payment instructions
+  submitButton: Submit Registration
   submitNote: >
     No card info is collected here -- you'll get Venmo/Zelle/PayPal
     instructions on the next page.

@@ -15,6 +15,7 @@ export function findTicketType(pricing: PricingContent, id: TicketTypeId) {
 }
 
 export function calculateAttendeePrice(attendee: AttendeeInput, pricing: PricingContent): number {
+  if (!attendee.ticketType) return 0
   const base = findTicketType(pricing, attendee.ticketType).price
   const sundayNight = pricing.addOns.find((a) => a.id === "sundayNight")?.price ?? 0
   const alcohol = pricing.addOns.find((a) => a.id === "alcohol")?.price ?? 0

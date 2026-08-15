@@ -46,7 +46,7 @@ export function AttendeeForm({
     )
   }
 
-  const ticketDef = findTicketType(pricing, attendee.ticketType)
+  const ticketDef = attendee.ticketType ? findTicketType(pricing, attendee.ticketType) : null
   const price = calculateAttendeePrice(attendee, pricing)
   const sundayAddOn = pricing.addOns.find((a) => a.id === "sundayNight")
   const alcoholAddOn = pricing.addOns.find((a) => a.id === "alcohol")
@@ -219,7 +219,7 @@ export function AttendeeForm({
 
       <div className="space-y-4">
         <h4 className="subtitle">{t.attendeeInfoSubtitle}</h4>
-        {ticketDef.allowsRoommatePreference && (
+        {ticketDef?.allowsRoommatePreference && (
           <Field label={t.roommatePreference}>
             {index > 0 && firstAttendeeRoommatePreference?.trim() && (
               <label className="flex items-center gap-2 mb-2 cursor-pointer">
