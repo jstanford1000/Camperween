@@ -9,7 +9,7 @@ import {
   calculateOrderTotal,
   findTicketType,
 } from "@/lib/pricing"
-import { sendConfirmationEmail } from "@/lib/email"
+import { sendAdminNotificationEmail, sendConfirmationEmail } from "@/lib/email"
 
 export interface AttendeeFormData {
   firstName: string
@@ -89,7 +89,7 @@ export async function createOrder(data: OrderFormData) {
     },
   })
 
-  await sendConfirmationEmail({
+  const emailData = {
     orderId: order.id,
     purchaserFirstName: data.purchaserFirstName,
     purchaserLastName: data.purchaserLastName,
@@ -101,7 +101,9 @@ export async function createOrder(data: OrderFormData) {
       ticketLabel: findTicketType(pricing, a.ticketType).label,
       price: calculateAttendeePrice(a, pricing),
     })),
-  })
+  }
+  await sendConfirmationEmail(emailData)
+  await sendAdminNotificationEmail(emailData)
 
   return order.id
 }

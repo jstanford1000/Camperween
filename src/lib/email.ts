@@ -19,6 +19,7 @@ interface ConfirmationEmailData {
 }
 
 const FROM_ADDRESS = process.env.EMAIL_FROM || "Camperween <onboarding@resend.dev>"
+const ADMIN_NOTIFICATION_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL
 
 export async function sendConfirmationEmail(data: ConfirmationEmailData) {
   const apiKey = process.env.RESEND_API_KEY
@@ -80,5 +81,57 @@ export async function sendConfirmationEmail(data: ConfirmationEmailData) {
     })
   } catch (err) {
     console.error("Failed to send confirmation email:", err)
+  }
+}
+
+export async function sendAdminNotificationEmail(data: ConfirmationEmailData) {
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey) {
+    console.warn("RESEND_API_KEY not set -- skipping admin notification email")
+    return
+  }
+  if (!ADMIN_NOTIFICATION_EMAIL) {
+    console.warn("ADMIN_NOTIFICATION_EMAIL not set -- skipping admin notification email")
+    return
+  }
+
+  const resend = new Resend(apiKey)
+
+  const attendeeRows = data.attendees
+    .map(
+      (a) => `
+        <tr>
+          <td style="padding:4px 8px;border-bottom:1px solid #eee;">${a.firstName} ${a.lastName} &middot; ${a.ticketLabel}</td>
+          <td style="padding:4px 8px;border-bottom:1px solid #eee;text-align:right;">${formatCurrency(a.price)}</td>
+        </tr>`
+    )
+    .join("")
+
+  const html = `
+    <div style="font-family:Arial,Helvetica,sans-serif;max-width:480px;margin:0 auto;color:#1a1a1a;">
+      <h1 style="font-size:20px;">New registration: ${data.purchaserFirstName} ${data.purchaserLastName}</h1>
+      <p style="font-size:14px;">${data.purchaserEmail}</p>
+
+      <table style="width:100%;border-collapse:collapse;font-size:14px;margin:16px 0;">
+        ${attendeeRows}
+        <tr>
+          <td style="padding:8px;font-weight:bold;">Total</td>
+          <td style="padding:8px;text-align:right;font-weight:bold;">${formatCurrency(data.total)}</td>
+        </tr>
+      </table>
+
+      <p style="font-size:12px;color:#666;">Order #${data.orderId} &middot; view in the admin dashboard.</p>
+    </div>
+  `
+
+  try {
+    await resend.emails.send({
+      from: FROM_ADDRESS,
+      to: ADMIN_NOTIFICATION_EMAIL,
+      subject: `New Camperween registration: ${data.purchaserFirstName} ${data.purchaserLastName}`,
+      html,
+    })
+  } catch (err) {
+    console.error("Failed to send admin notification email:", err)
   }
 }
