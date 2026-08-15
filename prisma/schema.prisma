@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Order {
+  id                      String   @id @default(cuid())
+  purchaserFirstName      String
+  purchaserLastName       String
+  purchaserEmail          String
+  purchaserPhone          String
+  arrivalExpectation      String
+  emergencyContactName    String
+  emergencyContactPhone   String
+  liabilitySignatureName  String
+  liabilitySignatureDate  String
+  parentGuardianWaiver    Boolean  @default(false)
+  comments                String?
+  subtotal                Float
+  total                   Float
+  paymentStatus           String   @default("unpaid")
+  paidAt                  DateTime?
+  paidNote                String?
+  adminNote               String?
+  createdAt               DateTime @default(now())
+  attendees               Attendee[]
+}
+
+model Attendee {
+  id                     String   @id @default(cuid())
+  orderId                String
+  order                  Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  firstName              String
+  lastName               String
+  email                  String?
+  ageCategory            String
+  ticketType             String
+  price                  Float
+  roommatePreference     String?
+  dietaryRestrictions    String?
+  phone                  String?
+  specialAccommodations  String?
+  volunteerTasks         String?
+  sundayNightAddOn       Boolean  @default(false)
+  alcoholAddOn           Boolean  @default(false)
+  createdAt              DateTime @default(now())
+}

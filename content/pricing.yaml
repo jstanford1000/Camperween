@@ -1,0 +1,64 @@
+# Camperween pricing config.
+# Edit prices, labels, and descriptions here -- changes show up on the site
+# the next time the page loads (no code changes needed).
+# Do not remove the "id" fields; they're used internally to match up orders.
+# The intro paragraph shown above the ticket list lives in labels.yaml
+# (attendees.registrationTypeDescription), alongside the rest of the form text.
+
+ticketTypes:
+  - id: roommates
+    label: Roomie in Miller or Morris Lodge
+    description: 5-10 people/room. Tell us who you're rooming with below (Larger shared rooms fit 5-10 people) OR tell us you are flexible below and we will pick great roommates for you. 
+    price: 270
+    hasLodging: true
+    allowsRoommatePreference: true
+  - id: buddies
+    label: Buddy in Cary Lodge
+    description: 3-4 people/room. Tell us who you're rooming with below (Smaller room fit up to 4 people) or tell us you are flexible and we will pick great roommates for you.
+    price: 305
+    hasLodging: true
+    allowsRoommatePreference: true
+  - id: couples
+    label: Couple in Cary Lodge
+    description: 2 people in a room in the Cary Lodge. Tell us who your rooomate is below if it's not obvious!
+    price: 365
+    hasLodging: true
+    allowsRoommatePreference: true
+  - id: single
+    label: Single in Cary Lodge
+    description: 1 person alone in a room in the Cary Lodge. Pretty pricey so needs to be worth it!
+    price: 700
+    hasLodging: true
+    allowsRoommatePreference: false
+  - id: kiddie
+    label: Kiddie
+    description: For little kids 0-5 years old. You will be rooming with your parents in whatever space they have chosen for themselves.
+    price: 0
+    hasLodging: true
+    allowsRoommatePreference: false
+  - id: camper
+    label: Camper (RV/trailer)
+    description: >
+      Stay in your own camper for the weekend. Includes 2 days of food
+      and parking/staying in the lot. Tents on site are not allowed.
+    price: 220
+    hasLodging: false
+    allowsRoommatePreference: false
+  - id: day_rate
+    label: Day rate (no lodging)
+    description: >
+      Come for the day only. Includes all meals, snacks, and activities for ONE day. No overnight
+      lodging on site.
+    price: 120
+    hasLodging: false
+    allowsRoommatePreference: false
+
+addOns:
+  - id: sundayNight
+    label: Sunday night add-on
+    description: Stay Sunday night and leave Monday morning at 10 AM. No Monday breakfast onsite.
+    price: 82
+  - id: alcohol
+    label: Alcohol add-on
+    description: Access to the alcohol at camp for the weekend.
+    price: 15

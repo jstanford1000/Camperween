@@ -1,0 +1,131 @@
+# Camperween form text.
+# Edit any of the text below to change what shows up on the registration
+# page -- no code changes needed. Keep the structure (indentation and the
+# keys on the left of each ":") the same, just change the text after it.
+# In the registrationTypeDescription field, wrap a word or phrase in double
+# asterisks -- **like this** -- to make it bold on the page.
+
+groupInfo:
+  sectionTitle: Group info
+  primaryContact:
+    sectionTitle: Primary contact
+    subtitle: Who is the point person for this group? 
+    firstName: First Name
+    lastName: Last Name
+    email: Email Address
+    phone: Phone Number
+  arrivalExpectation: When do you expect to arrive?
+  emergencyContactName: Emergency contact name
+  emergencyContactPhone: Emergency contact phone number
+
+waiver:
+  sectionTitle: Accident waiver and release of liability
+  paragraphs:
+    - >
+      I HEREBY ASSUME ALL OF THE RISKS OF PARTICIPATING AND/OR VOLUNTEERING IN THIS ACTIVITY OR EVENT, including by way of example and not limitation, any risks that may arise from negligence or carelessness on the part of the persons or entities being released, from dangerous or defective equipment or property owned, maintained, or controlled by them, or because of their possible liability without fault.
+    - >
+      I acknowledge that this Accident Waiver and Release of Liability Form will be used by the event holders, sponsors, and organizers of this activity or event in which I may participate, and that it will govern my actions and responsibilities at said activity or event.
+    - >
+      In consideration of my application and permitting me to participate in
+      this event, I hereby take action for myself, my executors,
+      administrators, next of kin, and assigns as follows:
+    - >
+      (A) I WAIVE, RELEASE, AND DISCHARGE from any and all liability,
+      including but not limited to, liability arising from the negligence or
+      fault of the entities and persons released, for my death, disability,
+      personal injury, property damage, theft, or actions of any kind which
+      may hereafter accrue to me including traveling to and from this event,
+      THE FOLLOWING ENTITIES OR PERSONS: Julianne Stanford, Scott Stanford, and
+      activity/event representatives, agents, or volunteers;
+    - >
+      (B) I INDEMNIFY, HOLD HARMLESS, AND PROMISE NOT TO SUE the entities or
+      persons mentioned in this paragraph from any and all liabilities or
+      claims made as a result of participation in this activity or event,
+      whether caused by the negligence of release or otherwise.
+    - >
+      I acknowledge that I have read this document and I fully understand
+      its content. I am aware that this is a release of liability and a
+      contract and I sign it of my own free will. 
+    - >
+      I hereby consent to receive medical treatment which may be deemed advisable in the event of injury, accident, and/or illness during this activity or event. 
+    - >  
+      This Accident Waiver and Release of Liability shall be construed broadly to provide a release and waiver to the maximum extent permissible under applicable law. 
+    - >
+      I CERTIFY THAT I HAVE READ THIS DOCUMENT AND I FULLY UNDERSTAND ITS CONTENT.  I AM AWARE THAT THIS IS A RELEASE OF LIABILITY AND A CONTRACT AND I SIGN IT OF MY OWN FREE WILL.
+  agreeCheckbox: I have read, acknowledge, and agree to the terms above.
+  signatureName: Type your electronic signature (full name)
+  parentGuardianWaiver: >
+    Parent and guardian waiver: I represent that I am the parent/legal
+    guardian of the minor(s) in my party and, in that capacity, consent to
+    their participation and agree to the terms of the waiver above on their
+    behalf.
+
+comments:
+  sectionTitle: Any other comments or ideas for Camperween?
+
+attendees:
+  sectionTitle: Attendees
+  addAttendeeButton: + Add another attendee
+  sameAsPrimaryContact: Same as primary contact
+  firstName: First Name
+  lastName: Last Name
+  email: Email
+  phone: Phone number
+  ageCategory: Is this an adult, young adult, or child?
+  registrationType: Housing type
+  registrationTypeDescription: >
+    Pricing for Camperween is based on how many people you're comfortable sharing a room
+    with -- **a few roommates = lower price per person.**
+
+  
+    There are three lodges: **Cary** has rooms which house up to 3 or 4 people,  **Miller & Morris** have rooms which house 5-10 people depending on the room. **Open to sharing a room with friends and family?** Pick a lower priced tier and tell us exactly who you are sharing with or tell us you're flexible!  Room types will be filled in order of sign-up. **Prefer more privacy?** Pick a housing tier with just you and your partner for a higher price. 
+
+
+    All prices include delicious meals from Saturday morning to Sunday night, lots of snacks, non-alcholic beverages, crafts and fun galore. Friday night we will order pizza for those that are interested and will split the cost  
+   
+
+    **Select the housing type for this attendee:**
+  addOnsSubtitle: Add-ons
+  attendeeInfoSubtitle: Other info
+  roommatePreference: >
+    Who do you want as roommates, if anyone? (Name them, or leave blank and
+    we'll assign roommates for you.)
+  sameRoommatesAsFirst: Same roommates as the first person above.
+  dietaryRestrictions: Describe any eating restrictions for this person
+  specialAccommodations: Describe any special accommodations needed for this person
+  volunteerTasksTitle: Pick volunteer tasks that this person is open to doing
+  volunteerTasksDescription: >
+    To make camp run smoothly, we are asking everyone to pitch in to help out with one fun task either before or during camp. Select the tasks you're open to help out with and we will send out assignments. If you are already leading an activity (you know who you are!), you don't need to sign up for additional tasks -- just click the last checkbox at the bottom.
+   
+ageCategories:
+  - id: adult
+    label: Adult
+  - id: young_adult
+    label: Young adult (18-25)
+  - id: child
+    label: Child (0-17)
+
+volunteerTasks:
+  - "Crafter: Lead a craft project of your choice on Saturday afternoon."
+  - "Dance Hall Setter Upper 1: Help set up dance hall on Saturday for the party."
+  - "Dance Hall Cleaner 1: Help clean up dance hall on Sunday morning post party."
+  - "Dance Hall Setter Upper 2: Help set up dance hall for open mic on Sunday."
+  - "Dance Hall Cleaner 2: Help clean up dance hall after open mic on Sunday."
+  - "Arrival organizer: Arrive at camp Friday and help with initial activity set-up."
+  - "Alcohol monitor: Coordinate purchase and distribution of alcohol at camp."
+  - "Snack monitor: Coordinate purchase and distribution of snacks at camp."
+  - "Saturday on-call lieutenant: Help with things as they come up on Saturday."
+  - "Sunday on-call lieutenant: Help with things as they come up on Sunday."
+  - "Trick or Treat Trickster: Help set up trick or treat route on Sunday (if we do trick-or-treating this year)."
+  - "Carving Cleaner: Pitch in to help clean up after pumpkin carving."
+  - "Open Mic Organizer: Set up clipboard to organize open mic sign-ups."
+  - "Open Mic Emcee: Emcee the event with all the charm you can muster."
+  - "Wild card: I'm open to be assigned to other tasks when they come up. I might even want to suggest some new activities."
+  - "Already doing something: I'm already organizing an activity so am exempt from answering this."
+
+orderSummary:
+  sectionTitle: Order summary
+  submitButton: Continue to payment instructions
+  submitNote: >
+    No card info is collected here -- you'll get Venmo/Zelle/PayPal
+    instructions on the next page.
