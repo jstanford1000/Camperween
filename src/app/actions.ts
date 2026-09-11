@@ -182,9 +182,13 @@ export interface AttendeeUpdateData {
 }
 
 async function recalculateOrderTotal(orderId: string) {
-  const attendees = await prisma.attendee.findMany({ where: { orderId } })
-  const total = attendees.reduce((sum, a) => sum + a.price, 0)
-  await prisma.order.update({ where: { id: orderId }, data: { subtotal: total, total } })
+  const [attendees, order] = await Promise.all([
+    prisma.attendee.findMany({ where: { orderId } }),
+    prisma.order.findUniqueOrThrow({ where: { id: orderId } }),
+  ])
+  const subtotal = attendees.reduce((sum, a) => sum + a.price, 0)
+  const total = Math.max(0, subtotal - order.discountAmount)
+  await prisma.order.update({ where: { id: orderId }, data: { subtotal, total } })
 }
 
 export async function updateAttendee(attendeeId: string, data: AttendeeUpdateData) {
@@ -244,4 +248,18 @@ export async function updateOrderNote(orderId: string, note: string) {
     where: { id: orderId },
     data: { adminNote: note || null },
   })
+}
+
+export async function updateOrderDiscount(orderId: string, discountAmount: number) {
+  if (!(await isAdminAuthed())) {
+    throw new Error("Not authorized")
+  }
+  if (!Number.isFinite(discountAmount) || discountAmount < 0) {
+    throw new Error("Discount must be a non-negative number")
+  }
+  await prisma.order.update({
+    where: { id: orderId },
+    data: { discountAmount },
+  })
+  await recalculateOrderTotal(orderId)
 }

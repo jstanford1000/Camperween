@@ -8,6 +8,7 @@ import { findTicketType, formatCurrency } from "@/lib/pricing"
 import { useRouter } from "next/navigation"
 import { AdminAttendeeCard } from "./AdminAttendeeCard"
 import { AdminOrderNote } from "./AdminOrderNote"
+import { AdminOrderDiscount } from "./AdminOrderDiscount"
 
 interface AttendeeRow {
   id: string
@@ -35,6 +36,8 @@ interface OrderRow {
   emergencyContactPhone: string
   comments: string | null
   adminNote: string | null
+  subtotal: number
+  discountAmount: number
   total: number
   paymentStatus: string
   createdAt: Date
@@ -67,6 +70,7 @@ export function AdminDashboard({
   const totalOwed = orders
     .filter((o) => o.paymentStatus !== "paid")
     .reduce((sum, o) => sum + o.total, 0)
+  const totalDiscounts = orders.reduce((sum, o) => sum + (o.discountAmount || 0), 0)
 
   const tierLabel = (ticketType: string) => {
     try {
@@ -152,9 +156,10 @@ export function AdminDashboard({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <StatCard label="Collected" value={formatCurrency(totalCollected)} />
           <StatCard label="Outstanding" value={formatCurrency(totalOwed)} />
+          <StatCard label="Total discounts" value={formatCurrency(totalDiscounts)} />
           <StatCard label="Total attendees" value={String(totalAttendees)} />
         </div>
 
@@ -212,8 +217,13 @@ export function AdminDashboard({
                   <OrderTierSummary order={order} tierLabel={tierLabel} />
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className="font-semibold text-neutral-100">
+                  <span className="font-semibold text-neutral-100 text-right">
                     {formatCurrency(order.total)}
+                    {order.discountAmount > 0 && (
+                      <span className="block text-xs font-normal text-amber-400">
+                        -{formatCurrency(order.discountAmount)} discount
+                      </span>
+                    )}
                   </span>
                   <button
                     onClick={(e) => {
@@ -262,7 +272,10 @@ export function AdminDashboard({
                       <p className="text-neutral-500 text-sm">No attendees left on this order.</p>
                     )}
                   </div>
-                  <AdminOrderNote orderId={order.id} note={order.adminNote} />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <AdminOrderDiscount orderId={order.id} discountAmount={order.discountAmount} />
+                    <AdminOrderNote orderId={order.id} note={order.adminNote} />
+                  </div>
                 </div>
               )}
             </div>

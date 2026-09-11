@@ -26,6 +26,7 @@ model Order {
   parentGuardianWaiver    Boolean  @default(false)
   comments                String?
   subtotal                Float
+  discountAmount          Float    @default(0)
   total                   Float
   paymentStatus           String   @default("unpaid")
   paidAt                  DateTime?
