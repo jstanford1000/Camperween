@@ -40,6 +40,7 @@ export async function GET() {
     "Roommate Preference",
     "Dietary Restrictions",
     "Special Accommodations",
+    "Volunteer Tasks",
     "Order Created At",
   ]
 
@@ -68,6 +69,7 @@ export async function GET() {
           a.roommatePreference,
           a.dietaryRestrictions,
           a.specialAccommodations,
+          a.volunteerTasks,
           order.createdAt.toISOString(),
         ]
           .map(csvCell)
